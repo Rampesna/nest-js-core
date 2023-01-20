@@ -1,1 +1,3 @@
-export class GetAllRequest {}
+export class GetAllRequest {
+
+}

@@ -9,31 +9,66 @@ import { CreateRequest } from "../Requests/UserController/CreateRequest";
 import { UpdateRequest } from "../Requests/UserController/UpdateRequest";
 import { DeleteRequest } from "../Requests/UserController/DeleteRequest";
 import { TypeOrmQueryService } from "@nestjs-query/query-typeorm";
+import ServiceResponse from "../Utils/ServiceResponse";
 
 @Injectable()
 export class UserService extends TypeOrmQueryService<UserModel> {
 
     constructor(
         @InjectRepository(UserModel)
-        private usersRepository: Repository<UserModel>
+        private userRepository: Repository<UserModel>
     ) {
-        super(usersRepository, {
+        super(userRepository, {
             useSoftDelete: true
         });
     }
 
-    getAll(GetAllRequest: GetAllRequest) {
-        return this.usersRepository.find();
+    async login(
+        email: string,
+        password: string
+    ) {
+        let user = await this.userRepository.findOne({
+            where: {
+                email: email
+            }
+        });
+        return user;
+        if (user) {
+            if (user.password === password) {
+                return new ServiceResponse(
+                    true,
+                    "Login successful",
+                    user,
+                    200
+                );
+            } else {
+                return new ServiceResponse(
+                    false,
+                    "Incorrect password",
+                    null,
+                    400
+                );
+            }
+        } else {
+            return new ServiceResponse(
+                false,
+                "User not found",
+                null,
+                404
+            );
+        }
+    }
+
+    getAll() {
+        return this.userRepository.find();
     }
 
     // @ts-ignore
-    getById(
-        id: number
-    ) {
+    getById(GetByIdRequest: GetByIdRequest) {
         // @ts-ignore
-        return this.usersRepository.findOne({
+        return this.userRepository.findOne({
             where: {
-                id: id
+                id: GetByIdRequest.id
             },
             relations: {
                 todos: true
