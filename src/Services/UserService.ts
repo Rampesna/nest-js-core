@@ -1,22 +1,25 @@
-import { Injectable } from "@nestjs/common";
-import { InjectRepository } from "@nestjs/typeorm";
-import { Repository } from "typeorm";
-import { UserModel } from "../Models/TypeOrm/UserModel";
+import {Injectable} from "@nestjs/common";
+import {InjectRepository} from "@nestjs/typeorm";
+import {Repository} from "typeorm";
+import {UserModel} from "../Models/TypeOrm/UserModel";
 
-import { GetAllRequest } from "../Requests/UserController/GetAllRequest";
-import { GetByIdRequest } from "../Requests/UserController/GetByIdRequest";
-import { CreateRequest } from "../Requests/UserController/CreateRequest";
-import { UpdateRequest } from "../Requests/UserController/UpdateRequest";
-import { DeleteRequest } from "../Requests/UserController/DeleteRequest";
-import { TypeOrmQueryService } from "@nestjs-query/query-typeorm";
+import {GetAllRequest} from "../Requests/UserController/GetAllRequest";
+import {GetByIdRequest} from "../Requests/UserController/GetByIdRequest";
+import {CreateRequest} from "../Requests/UserController/CreateRequest";
+import {UpdateRequest} from "../Requests/UserController/UpdateRequest";
+import {DeleteRequest} from "../Requests/UserController/DeleteRequest";
+import {TypeOrmQueryService} from "@nestjs-query/query-typeorm";
 import ServiceResponse from "../Utils/ServiceResponse";
+import {sign} from "jsonwebtoken";
+import {JwtService} from "./JwtService";
 
 @Injectable()
 export class UserService extends TypeOrmQueryService<UserModel> {
 
     constructor(
         @InjectRepository(UserModel)
-        private userRepository: Repository<UserModel>
+        private userRepository: Repository<UserModel>,
+        private jwtService: JwtService
     ) {
         super(userRepository, {
             useSoftDelete: true
@@ -32,13 +35,24 @@ export class UserService extends TypeOrmQueryService<UserModel> {
                 email: email
             }
         });
-        return user;
         if (user) {
             if (user.password === password) {
+                this.jwtService.create(
+                    'user',
+                    user.id.toString(),
+                    null
+                );
+
                 return new ServiceResponse(
                     true,
                     "Login successful",
-                    user,
+                    {
+                        token: sign({
+                            id: user.id,
+                            email: user.email,
+                            name: user.name
+                        }, process.env.JWT_SECRET)
+                    },
                     200
                 );
             } else {

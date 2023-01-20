@@ -1,5 +1,4 @@
-import { Entity, Column, PrimaryGeneratedColumn, DeleteDateColumn, OneToMany, JoinColumn } from "typeorm";
-import { TodoModel } from "./TodoModel";
+import {Entity, Column, PrimaryGeneratedColumn, DeleteDateColumn } from "typeorm";
 
 @Entity("json_web_tokens")
 export class JwtModel {
@@ -15,13 +14,21 @@ export class JwtModel {
     @Column()
     token: string;
 
-    @Column()
+    @Column({
+        nullable: true
+    })
     expires_at: Date;
 
-    @Column()
+    @Column({
+        type: "timestamp",
+        default: () => "CURRENT_TIMESTAMP"
+    })
     created_at: Date;
 
-    @Column()
+    @Column({
+        type: "timestamp",
+        default: () => "CURRENT_TIMESTAMP"
+    })
     updated_at: Date;
 
     @DeleteDateColumn()
