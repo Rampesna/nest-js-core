@@ -1,46 +1,45 @@
-import { Injectable, NestMiddleware } from "@nestjs/common";
-import { Request, Response, NextFunction } from "express";
-import { JwtService } from "../Services/JwtService";
+import {NestMiddleware, Injectable} from '@nestjs/common';
+import {Request, Response, NextFunction} from 'express';
+import {JwtService} from "../Services/JwtService";
 import ServiceResponse from "../Utils/ServiceResponse";
 
 @Injectable()
 export class AuthMiddleware implements NestMiddleware {
-
     constructor(private readonly jwtService: JwtService) {
     }
+
     async use(request: Request, response: Response, next: NextFunction) {
-
-        let authorization = request.headers["authorization"];
-
-        if (!authorization) {
-            return response.json(
-                new ServiceResponse(
-                    false,
-                    "Unauthorized",
-                    null,
-                    401
-                )
+        if (!request.headers.authorization) {
+            return new ServiceResponse(
+                false,
+                'No authorization header',
+                null,
+                401
             );
         }
 
-        let tokenFromHeader = authorization.split(" ")[1];
+        const headerToken = request.headers.authorization.split(' ')[1];
 
-        if (!tokenFromHeader) {
-            return response.json(
-                new ServiceResponse(
-                    false,
-                    "Unauthorized",
-                    null,
-                    401
-                )
+        if (!headerToken) {
+            return new ServiceResponse(
+                false,
+                'No authorization header',
+                null,
+                401
             );
         }
 
-        let getJwtToken = this.jwtService.verify(tokenFromHeader);
+        let jwtToken = await this.jwtService.verifyToken(headerToken);
 
-        console.log(getJwtToken);
+        if (!jwtToken.Success) {
+            return new ServiceResponse(
+                false,
+                'Invalid token',
+                jwtToken.Data,
+                401
+            );
+        }
 
         next();
     }
 }
-

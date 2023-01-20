@@ -1,16 +1,24 @@
-import { MiddlewareConsumer, Module, NestModule, RequestMethod } from "@nestjs/common";
-import { ConfigModule } from '@nestjs/config';
-import { TypeOrmModule } from "@nestjs/typeorm";
-import { UserHttpModule } from "../HttpModules/UserHttpModule";
+import {MiddlewareConsumer, Module, NestModule, RequestMethod} from "@nestjs/common";
+import {ConfigModule} from '@nestjs/config';
+import {TypeOrmModule} from "@nestjs/typeorm";
 import dataSourceOptions from "../Config/TypeOrmConfig";
-import { AuthMiddleware } from "../Middlewares/AuthMiddleware";
+import {UserModule} from "../Modules/UserModule";
+import {JwtModel} from "../Models/TypeOrm/JwtModel";
+import {JwtService} from "../Services/JwtService";
+import {AuthMiddleware} from "../Middlewares/AuthMiddleware";
 
 @Module({
     imports: [
+        TypeOrmModule.forRoot(dataSourceOptions),
+        TypeOrmModule.forFeature([
+            JwtModel
+        ]),
         ConfigModule.forRoot(),
-        UserHttpModule,
-        TypeOrmModule.forRoot(dataSourceOptions)
+        UserModule,
     ],
+    providers: [
+        JwtService
+    ]
 })
 
 export class App implements NestModule {

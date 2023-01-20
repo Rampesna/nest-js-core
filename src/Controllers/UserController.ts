@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Put, Body, Delete, UseGuards } from "@nestjs/common";
+import { Controller, Get, Post, Put, Body, Delete } from "@nestjs/common";
 import { UserService } from "../Services/UserService";
 import { LoginRequest } from "../Requests/UserController/LoginRequest";
 import { GetAllRequest } from "../Requests/UserController/GetAllRequest";
@@ -10,12 +10,14 @@ import { DeleteRequest } from "../Requests/UserController/DeleteRequest";
 @Controller("user")
 export class UserController {
     constructor(private readonly userService: UserService) {
+
     }
 
     @Post("login")
     login(@Body() LoginRequest: LoginRequest) {
         return this.userService.login(LoginRequest.email, LoginRequest.password);
     }
+
 
     @Get("getAll")
     getAll() {

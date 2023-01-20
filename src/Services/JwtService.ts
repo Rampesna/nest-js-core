@@ -1,10 +1,10 @@
-import { Injectable } from "@nestjs/common";
-import { InjectRepository } from "@nestjs/typeorm";
-import { Repository } from "typeorm";
-import { JwtModel } from "../Models/TypeOrm/JwtModel";
-import jwt from "jsonwebtoken";
+import {Injectable} from "@nestjs/common";
+import {InjectRepository} from "@nestjs/typeorm";
+import {Repository} from "typeorm";
+import {JwtModel} from "../Models/TypeOrm/JwtModel";
+import {sign, verify} from "jsonwebtoken";
 
-import { TypeOrmQueryService } from "@nestjs-query/query-typeorm";
+import {TypeOrmQueryService} from "@nestjs-query/query-typeorm";
 import ServiceResponse from "../Utils/ServiceResponse";
 
 @Injectable()
@@ -24,7 +24,7 @@ export class JwtService extends TypeOrmQueryService<JwtModel> {
         tokenable_id: string,
         expires_at?: Date
     ) {
-        let token = jwt.sign({
+        let token = sign({
             tokenable_type: tokenable_type,
             tokenable_id: tokenable_id,
             expires_at: expires_at
@@ -46,7 +46,7 @@ export class JwtService extends TypeOrmQueryService<JwtModel> {
         );
     }
 
-    verify(
+    verifyToken(
         token: string
     ) {
         let jwtToken = this.jwtRepository.findOne({
@@ -59,7 +59,7 @@ export class JwtService extends TypeOrmQueryService<JwtModel> {
             return new ServiceResponse(
                 true,
                 "Verified JWT",
-                jwt.verify(token, process.env.JWT_SECRET),
+                verify(token, process.env.JWT_SECRET),
                 200
             );
         } else {
