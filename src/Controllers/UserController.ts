@@ -18,7 +18,6 @@ export class UserController {
         return this.userService.login(LoginRequest.email, LoginRequest.password);
     }
 
-
     @Get("getAll")
     getAll() {
         return this.userService.getAll();
