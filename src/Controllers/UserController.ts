@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Put, Body, Delete } from "@nestjs/common";
+import { Controller, Get, Post, Put, Body, Delete, Req } from "@nestjs/common";
 import { UserService } from "../Services/UserService";
 import { LoginRequest } from "../Requests/UserController/LoginRequest";
 import { GetAllRequest } from "../Requests/UserController/GetAllRequest";
@@ -16,6 +16,11 @@ export class UserController {
     @Post("login")
     login(@Body() LoginRequest: LoginRequest) {
         return this.userService.login(LoginRequest.email, LoginRequest.password);
+    }
+
+    @Get("getProfile")
+    getProfile(@Req() request) {
+        return this.userService.getById(request.user.id);
     }
 
     @Get("getAll")

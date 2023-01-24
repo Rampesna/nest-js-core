@@ -78,16 +78,21 @@ export class UserService extends TypeOrmQueryService<UserModel> {
     }
 
     // @ts-ignore
-    getById(GetByIdRequest: GetByIdRequest) {
+    async getById(GetByIdRequest: GetByIdRequest) {
         // @ts-ignore
-        return this.userRepository.findOne({
-            where: {
-                id: GetByIdRequest.id
-            },
-            relations: {
-                todos: true
-            }
-        });
+        return new ServiceResponse(
+            true,
+            "Get user by id",
+            await this.userRepository.findOne({
+                where: {
+                    id: GetByIdRequest.id
+                },
+                relations: {
+                    // todos: true
+                }
+            }),
+            200
+        );
     }
 
     create(CreateRequest: CreateRequest) {

@@ -46,6 +46,8 @@ export class AuthMiddleware implements NestMiddleware {
             );
         }
 
+        request.user = jwtToken.Data;
+
         next();
     }
 }

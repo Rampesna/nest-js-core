@@ -1,10 +1,10 @@
-import {Injectable} from "@nestjs/common";
-import {InjectRepository} from "@nestjs/typeorm";
-import {Repository} from "typeorm";
-import {JwtModel} from "../Models/TypeOrm/JwtModel";
-import {sign, verify} from "jsonwebtoken";
+import { Injectable } from "@nestjs/common";
+import { InjectRepository } from "@nestjs/typeorm";
+import { Repository } from "typeorm";
+import { JwtModel } from "../Models/TypeOrm/JwtModel";
+import { sign, verify } from "jsonwebtoken";
 
-import {TypeOrmQueryService} from "@nestjs-query/query-typeorm";
+import { TypeOrmQueryService } from "@nestjs-query/query-typeorm";
 import ServiceResponse from "../Utils/ServiceResponse";
 
 @Injectable()
@@ -56,12 +56,22 @@ export class JwtService extends TypeOrmQueryService<JwtModel> {
         });
 
         if (jwtToken) {
-            return new ServiceResponse(
-                true,
-                "Verified JWT",
-                verify(token, process.env.JWT_SECRET),
-                200
-            );
+            try {
+                let verifiedToken = verify(token, process.env.JWT_SECRET);
+                return new ServiceResponse(
+                    true,
+                    "Verified token",
+                    verifiedToken,
+                    200
+                );
+            } catch (e) {
+                return new ServiceResponse(
+                    false,
+                    "Could not verify token",
+                    null,
+                    404
+                );
+            }
         } else {
             return new ServiceResponse(
                 false,
