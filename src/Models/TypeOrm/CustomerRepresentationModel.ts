@@ -5,8 +5,8 @@ import {
   DeleteDateColumn,
 } from 'typeorm';
 
-@Entity('users')
-export class UserModel {
+@Entity('customer_representations')
+export class CustomerRepresentationModel {
   @PrimaryGeneratedColumn()
   id: number;
 
@@ -21,21 +21,12 @@ export class UserModel {
   @Column()
   password: string;
 
-  @Column({
-    default: () => 'CURRENT_TIMESTAMP',
-    nullable: true,
-  })
+  @Column()
   created_at: Date;
 
-  @Column({
-    default: () => 'CURRENT_TIMESTAMP',
-    nullable: true,
-  })
+  @Column()
   updated_at: Date;
 
-  @DeleteDateColumn({
-    default: () => 'CURRENT_TIMESTAMP',
-    nullable: true,
-  })
+  @DeleteDateColumn()
   deleted_at: Date;
 }
