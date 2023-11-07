@@ -85,4 +85,4 @@ the sponsors and support by the amazing backers.
 
 ## License
 
-NestJsCore [MIT licensed](LICENSE).
+NestJsCore [MIT licensed](https://github.com/nestjs/nest/blob/master/LICENSE)
