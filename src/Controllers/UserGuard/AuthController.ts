@@ -3,7 +3,7 @@ import { Response } from 'express';
 import { ApiTags } from '@nestjs/swagger';
 import { LoginRequest } from '../../Requests/UserGuard/UserController/LoginRequest';
 import { RegisterRequest } from '../../Requests/UserGuard/UserController/RegisterRequest';
-import { UserService } from '../../Services/TypeOrm/UserService';
+import { UserService } from '../../Services/Mongoose/UserService';
 
 @Controller()
 export class AuthController {

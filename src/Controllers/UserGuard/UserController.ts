@@ -2,7 +2,7 @@ import { Controller, Get, Res, UseGuards } from '@nestjs/common';
 import { Response } from 'express';
 import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 import { UserJwtGuard } from '../../Guards/User/UserJwtGuard';
-import { UserService } from '../../Services/TypeOrm/UserService';
+import { UserService } from '../../Services/Mongoose/UserService';
 
 @ApiBearerAuth()
 @Controller()

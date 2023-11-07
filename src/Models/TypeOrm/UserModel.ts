@@ -3,6 +3,8 @@ import {
   Column,
   PrimaryGeneratedColumn,
   DeleteDateColumn,
+  CreateDateColumn,
+  UpdateDateColumn,
 } from 'typeorm';
 
 @Entity('users')
@@ -21,21 +23,17 @@ export class UserModel {
   @Column()
   password: string;
 
-  @Column({
-    default: () => 'CURRENT_TIMESTAMP',
-    nullable: true,
+  @CreateDateColumn({
+    type: 'timestamp',
   })
   created_at: Date;
 
-  @Column({
-    default: () => 'CURRENT_TIMESTAMP',
-    nullable: true,
+  @UpdateDateColumn({
+    type: 'timestamp',
+    onUpdate: 'CURRENT_TIMESTAMP(6)',
   })
   updated_at: Date;
 
-  @DeleteDateColumn({
-    default: () => 'CURRENT_TIMESTAMP',
-    nullable: true,
-  })
-  deleted_at: Date;
+  @DeleteDateColumn({ type: 'timestamp', nullable: true })
+  deleted_at?: Date;
 }

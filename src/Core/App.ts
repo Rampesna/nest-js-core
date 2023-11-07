@@ -8,8 +8,8 @@ import { UserModel as UserModelTypeOrm } from '../Models/TypeOrm/UserModel';
 import { UserJwtStrategy } from '../Strategies/UserGuard/UserJwtStrategy';
 import { UserJwtGuard } from '../Guards/User/UserJwtGuard';
 import { UserController } from '../Controllers/UserGuard/UserController';
-import { UserService } from '../Services/TypeOrm/UserService';
-import { JwtService } from '../Services/TypeOrm/JwtService';
+import { UserService } from '../Services/Mongoose/UserService';
+import { JwtService } from '../Services/Mongoose/JwtService';
 import {
   JwtTokenModel,
   JwtTokenSchema,

@@ -1,7 +1,7 @@
 import { ExtractJwt, Strategy } from 'passport-jwt';
 import { PassportStrategy } from '@nestjs/passport';
 import { Injectable } from '@nestjs/common';
-import { JwtService } from '../../Services/TypeOrm/JwtService';
+import { JwtService } from '../../Services/Mongoose/JwtService';
 
 @Injectable()
 export class UserJwtStrategy extends PassportStrategy(
