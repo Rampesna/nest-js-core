@@ -4,12 +4,15 @@ import { Repository } from 'typeorm';
 import { UserModel } from '../../Models/TypeOrm/UserModel';
 import { TypeOrmQueryService } from '@nestjs-query/query-typeorm';
 import ServiceResponse from '../../Core/ServiceResponse';
-import { sign } from 'jsonwebtoken';
 import * as bcrypt from 'bcrypt';
 import { JwtService } from './JwtService';
+import { IUserService } from '../../Interfaces/IUserService';
 
 @Injectable()
-export class UserService extends TypeOrmQueryService<UserModel> {
+export class UserService
+  extends TypeOrmQueryService<UserModel>
+  implements IUserService
+{
   constructor(
     @InjectRepository(UserModel)
     private userRepository: Repository<UserModel>,
@@ -20,7 +23,27 @@ export class UserService extends TypeOrmQueryService<UserModel> {
     });
   }
 
-  async login(email: string, password: string) {
+  async getAll() {
+    const users = await this.userRepository.find();
+
+    return new ServiceResponse(true, 'All users', users, 200);
+  }
+
+  async getByID(id: string | number): Promise<ServiceResponse> {
+    return new ServiceResponse(
+      true,
+      'Get user by id',
+      await this.userRepository.findOne({
+        where: {
+          id: parseInt(id.toString()),
+        },
+        relations: {},
+      }),
+      200,
+    );
+  }
+
+  async login(email: string, password: string): Promise<ServiceResponse> {
     const user = await this.userRepository.findOne({
       where: {
         email: email,
@@ -49,7 +72,11 @@ export class UserService extends TypeOrmQueryService<UserModel> {
     }
   }
 
-  async create(name: string, email: string, password: string) {
+  async create(
+    name: string,
+    email: string,
+    password: string,
+  ): Promise<ServiceResponse> {
     const checkEmailAlreadyExists = await this.userRepository.findOne({
       where: {
         email: email,
@@ -81,25 +108,38 @@ export class UserService extends TypeOrmQueryService<UserModel> {
     );
   }
 
-  async getAll() {
-    const users = await this.userRepository.find();
+  async update(
+    id: string | number,
+    name: string,
+    email: string,
+    password: string,
+  ): Promise<ServiceResponse> {
+    const user = await this.userRepository.findOne({
+      where: {
+        id: parseInt(id.toString()),
+      },
+    });
+    if (!user) {
+      return new ServiceResponse(false, 'User not found', null, 404);
+    }
+    user.name = name;
+    user.email = email;
+    user.password = bcrypt.hashSync(password, 10);
 
-    return new ServiceResponse(true, 'All users', users, 200);
+    const updatedUser = await this.userRepository.save(user);
+
+    return new ServiceResponse(true, 'Updated user', updatedUser, 200);
   }
-
-  async getByID(id: number) {
-    return new ServiceResponse(
-      true,
-      'Get user by id',
-      await this.userRepository.findOne({
-        where: {
-          id: id,
-        },
-        relations: {
-          // todos: true
-        },
-      }),
-      200,
-    );
+  async delete(id: string | number): Promise<ServiceResponse> {
+    const user = await this.userRepository.findOne({
+      where: {
+        id: parseInt(id.toString()),
+      },
+    });
+    if (!user) {
+      return new ServiceResponse(false, 'User not found', null, 404);
+    }
+    await this.userRepository.softDelete(id);
+    return new ServiceResponse(true, 'User deleted', null, 200);
   }
 }

@@ -13,9 +13,10 @@ import {
   CustomerRepresentationDocument,
   CustomerRepresentationModel,
 } from '../../Models/Mongoose/CustomerRepresentation/CustomerRepresentationModel';
+import { IJwtService } from '../../Interfaces/IJwtService';
 
 @Injectable()
-export class JwtService {
+export class JwtService implements IJwtService {
   constructor(
     @InjectModel(JwtTokenModel.name)
     private jwtTokenModel: Model<JwtTokenDocument>,
@@ -25,7 +26,11 @@ export class JwtService {
     private customerRepresentationModel: Model<CustomerRepresentationDocument>,
   ) {}
 
-  async create(tokenableType: string, tokenableId: string, expiresAt?: Date) {
+  async create(
+    tokenableType: string,
+    tokenableId: string | number,
+    expiresAt?: Date,
+  ): Promise<ServiceResponse> {
     const token = sign(
       {
         tokenableType: tokenableType,
@@ -46,7 +51,7 @@ export class JwtService {
     return new ServiceResponse(true, 'Created JWT', createdJwt, 200);
   }
 
-  async verifyToken(token: string) {
+  async verifyToken(token: string): Promise<ServiceResponse> {
     const jwtToken = await this.jwtTokenModel.findOne({
       token: token,
     });
@@ -76,17 +81,20 @@ export class JwtService {
     }
   }
 
-  async verifyPayload(tokenableType: string, tokenableId: string) {
+  async verifyPayload(
+    tokenableType: string,
+    tokenableId: string | number,
+  ): Promise<ServiceResponse> {
     let tokenable = {};
     if (tokenableType === 'user') {
       tokenable = await this.userModel.findOne({
-        _id: (tokenableId as string) ?? '',
+        _id: tokenableId.toString(),
       });
     }
 
     if (tokenableType === 'customerRepresentation') {
       tokenable = await this.customerRepresentationModel.findOne({
-        _id: (tokenableId as string) ?? '',
+        _id: tokenableId.toString(),
       });
     }
 

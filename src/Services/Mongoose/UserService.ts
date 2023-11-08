@@ -15,6 +15,23 @@ export class UserService implements IUserService {
     private jwtService: JwtService,
   ) {}
 
+  async getAll(): Promise<ServiceResponse> {
+    return new ServiceResponse(
+      true,
+      'All users',
+      await this.userModel.find().exec(),
+      200,
+    );
+  }
+
+  async getByID(id: string): Promise<ServiceResponse> {
+    const user = await this.userModel.findById(id).exec();
+    if (!user) {
+      return new ServiceResponse(false, 'User not found', null, 404);
+    }
+    return new ServiceResponse(true, 'User found', user, 200);
+  }
+
   async login(email: string, password: string): Promise<ServiceResponse> {
     const user = await this.userModel.findOne({
       email: email,
@@ -75,23 +92,6 @@ export class UserService implements IUserService {
       },
       200,
     );
-  }
-
-  async getAll(): Promise<ServiceResponse> {
-    return new ServiceResponse(
-      true,
-      'All users',
-      await this.userModel.find().exec(),
-      200,
-    );
-  }
-
-  async getById(id: string): Promise<ServiceResponse> {
-    const user = await this.userModel.findById(id).exec();
-    if (!user) {
-      return new ServiceResponse(false, 'User not found', null, 404);
-    }
-    return new ServiceResponse(true, 'User found', user, 200);
   }
 
   async update(

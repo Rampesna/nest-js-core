@@ -24,31 +24,31 @@ export class JwtService extends TypeOrmQueryService<JwtModel> {
   }
 
   async create(
-    tokenable_type: string,
-    tokenable_id: string,
-    expires_at?: Date,
-  ) {
+    tokenableType: string,
+    tokenableId: string | number,
+    expiresAt?: Date,
+  ): Promise<ServiceResponse> {
     const token = sign(
       {
-        tokenable_type: tokenable_type,
-        tokenable_id: tokenable_id,
-        expires_at: expires_at,
+        tokenable_type: tokenableType,
+        tokenable_id: parseInt(tokenableId.toString()),
+        expires_at: expiresAt,
       },
       process.env.JWT_SECRET,
     );
 
     const jwtModel = new JwtModel();
-    jwtModel.tokenable_type = tokenable_type;
-    jwtModel.tokenable_id = tokenable_id;
+    jwtModel.tokenable_type = tokenableType;
+    jwtModel.tokenable_id = parseInt(tokenableId.toString());
     jwtModel.token = token;
-    jwtModel.expires_at = expires_at;
+    jwtModel.expires_at = expiresAt;
 
     const createdJwt = await this.jwtRepository.save(jwtModel);
 
     return new ServiceResponse(true, 'Created JWT', createdJwt, 200);
   }
 
-  verifyToken(token: string) {
+  async verifyToken(token: string): Promise<ServiceResponse> {
     const jwtToken = this.jwtRepository.findOne({
       where: {
         token: token,
@@ -67,12 +67,15 @@ export class JwtService extends TypeOrmQueryService<JwtModel> {
     }
   }
 
-  async verifyPayload(tokenableType: string, tokenableId: number) {
+  async verifyPayload(
+    tokenableType: string,
+    tokenableId: string | number,
+  ): Promise<ServiceResponse> {
     let tokenable = {};
     if (tokenableType === 'user') {
       tokenable = await this.userRepository.findOne({
         where: {
-          id: tokenableId,
+          id: parseInt(tokenableId.toString()),
         },
       });
     }
@@ -80,7 +83,7 @@ export class JwtService extends TypeOrmQueryService<JwtModel> {
     if (tokenableType === 'customerRepresentation') {
       tokenable = await this.customerRepresentationRepository.findOne({
         where: {
-          id: tokenableId,
+          id: parseInt(tokenableId.toString()),
         },
       });
     }

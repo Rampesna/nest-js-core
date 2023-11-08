@@ -14,7 +14,7 @@ export class JwtModel {
   tokenable_type: string;
 
   @Column()
-  tokenable_id: string;
+  tokenable_id: number;
 
   @Column()
   token: string;

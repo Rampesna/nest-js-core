@@ -3,7 +3,7 @@ import ServiceResponse from '../Core/ServiceResponse';
 export interface IUserService {
   getAll(): Promise<ServiceResponse>;
 
-  getById(id: string | number): Promise<ServiceResponse>;
+  getByID(id: string | number): Promise<ServiceResponse>;
 
   login(email: string, password: string): Promise<ServiceResponse>;
 
