@@ -5,11 +5,9 @@ import { mongooseConfig } from '../Config/MongoseConfig';
 import { AuthController } from '../Controllers/UserGuard/AuthController';
 import { UserModel, UserSchema } from '../Models/Mongoose/User/UserModel';
 import { UserModel as UserModelTypeOrm } from '../Models/TypeOrm/UserModel';
-import { UserJwtStrategy } from '../Strategies/UserGuard/UserJwtStrategy';
-import { UserJwtGuard } from '../Guards/User/UserJwtGuard';
+import { InterfaceServiceProvider } from '../Providers/InterfaceServiceProvider';
 import { UserController } from '../Controllers/UserGuard/UserController';
-import { UserService } from '../Services/Mongoose/UserService';
-import { JwtService } from '../Services/Mongoose/JwtService';
+
 import {
   JwtTokenModel,
   JwtTokenSchema,
@@ -47,6 +45,6 @@ import { JwtModel } from '../Models/TypeOrm/JwtModel';
     WebSocketModule,
   ],
   controllers: [AuthController, UserController],
-  providers: [UserService, JwtService, UserJwtGuard, UserJwtStrategy],
+  providers: new InterfaceServiceProvider().providers,
 })
 export class App {}

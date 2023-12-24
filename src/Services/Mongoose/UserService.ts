@@ -1,18 +1,19 @@
-import { Injectable } from '@nestjs/common';
+import { Inject, Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import ServiceResponse from '../../Core/ServiceResponse';
 import { UserDocument, UserModel } from '../../Models/Mongoose/User/UserModel';
 import * as bcrypt from 'bcrypt';
 import { Model } from 'mongoose';
 import { IUserService } from '../../Interfaces/IUserService';
-import { JwtService } from './JwtService';
+import { IJwtService } from '../../Interfaces/IJwtService';
 
 @Injectable()
 export class UserService implements IUserService {
   constructor(
     @InjectModel(UserModel.name)
     private readonly userModel: Model<UserDocument>,
-    private jwtService: JwtService,
+    @Inject('IJwtService')
+    private jwtService: IJwtService,
   ) {}
 
   async getAll(): Promise<ServiceResponse> {

@@ -5,7 +5,7 @@ import { UserModel } from '../../Models/TypeOrm/UserModel';
 import { TypeOrmQueryService } from '@nestjs-query/query-typeorm';
 import ServiceResponse from '../../Core/ServiceResponse';
 import * as bcrypt from 'bcrypt';
-import { JwtService } from './JwtService';
+import { IJwtService } from '../../Interfaces/IJwtService';
 import { IUserService } from '../../Interfaces/IUserService';
 
 @Injectable()
@@ -16,7 +16,7 @@ export class UserService
   constructor(
     @InjectRepository(UserModel)
     private userRepository: Repository<UserModel>,
-    private jwtService: JwtService,
+    private jwtService: IJwtService,
   ) {
     super(userRepository, {
       useSoftDelete: true,

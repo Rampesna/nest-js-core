@@ -1,13 +1,16 @@
-import { Controller, Get, Res, UseGuards } from '@nestjs/common';
+import { Controller, Get, Inject, Res, UseGuards } from '@nestjs/common';
 import { Response } from 'express';
 import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 import { UserJwtGuard } from '../../Guards/User/UserJwtGuard';
-import { UserService } from '../../Services/Mongoose/UserService';
+import { IUserService } from '../../Interfaces/IUserService';
 
 @ApiBearerAuth()
 @Controller()
 export class UserController {
-  constructor(private readonly userService: UserService) {}
+  constructor(
+    @Inject('IUserService')
+    private readonly userService: IUserService,
+  ) {}
   @UseGuards(UserJwtGuard)
   @ApiTags('User')
   @Get('user/user/getAll')

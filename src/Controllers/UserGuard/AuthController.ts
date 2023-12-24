@@ -1,13 +1,16 @@
-import { Controller, Post, Body, Res } from '@nestjs/common';
+import { Controller, Post, Body, Res, Inject } from '@nestjs/common';
 import { Response } from 'express';
 import { ApiTags } from '@nestjs/swagger';
 import { LoginRequest } from '../../Requests/UserGuard/UserController/LoginRequest';
 import { RegisterRequest } from '../../Requests/UserGuard/UserController/RegisterRequest';
-import { UserService } from '../../Services/Mongoose/UserService';
+import { IUserService } from '../../Interfaces/IUserService';
 
 @Controller()
 export class AuthController {
-  constructor(private readonly userService: UserService) {}
+  constructor(
+    @Inject('IUserService')
+    private readonly userService: IUserService,
+  ) {}
 
   @ApiTags('Authentication')
   @Post('user/auth/login')

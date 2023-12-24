@@ -1,14 +1,17 @@
 import { ExtractJwt, Strategy } from 'passport-jwt';
 import { PassportStrategy } from '@nestjs/passport';
-import { Injectable } from '@nestjs/common';
-import { JwtService } from '../../Services/Mongoose/JwtService';
+import { Inject, Injectable } from '@nestjs/common';
+import { IJwtService } from '../../Interfaces/IJwtService';
 
 @Injectable()
 export class UserJwtStrategy extends PassportStrategy(
   Strategy,
   'UserJwtGuard',
 ) {
-  constructor(private readonly jwtService: JwtService) {
+  constructor(
+    @Inject('IJwtService')
+    private readonly jwtService: IJwtService,
+  ) {
     super({
       jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
       ignoreExpiration: false,
